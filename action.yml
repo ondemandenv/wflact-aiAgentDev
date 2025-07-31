@@ -1,0 +1,7 @@
+name: '@actions/wflact-aiAgentDev'
+description: 'ONDEMANDENV.dev, @actions/wflact-aiAgentDev'
+author: 'ONDEMANDENV.dev'
+
+runs:
+  using: node22
+  main: main.js
