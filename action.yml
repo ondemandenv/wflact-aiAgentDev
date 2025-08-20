@@ -2,6 +2,29 @@ name: '@actions/wflact-aiAgentDev'
 description: 'ONDEMANDENV.dev, @actions/wflact-aiAgentDev'
 author: 'ONDEMANDENV.dev'
 
+inputs:
+  openai-api-key:
+    description: 'OpenAI API Key'
+    required: false
+  gemini-api-key:
+    description: 'Google Gemini API Key'
+    required: false
+  claude-api-key:
+    description: 'Anthropic Claude API Key'
+    required: false
+  llm-provider:
+    description: 'LLM provider to use (openai, gemini, claude)'
+    required: true
+    default: 'openai'
+  max-iterations:
+    description: 'Maximum iterations within action'
+    required: false
+    default: '5'
+  max-job-iterations:
+    description: 'Maximum job iterations'
+    required: false
+    default: '10'
+
 runs:
   using: node20
   main: main.js
