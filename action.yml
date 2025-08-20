@@ -2,6 +2,40 @@ name: '@actions/wflact-aiAgentDev'
 description: 'ONDEMANDENV.dev, @actions/wflact-aiAgentDev'
 author: 'ONDEMANDENV.dev'
 
+inputs:
+  openai-api-key:
+    description: 'OpenAI API Key'
+    required: false
+  gemini-api-key:
+    description: 'Google Gemini API Key'
+    required: false
+  claude-api-key:
+    description: 'Anthropic Claude API Key'
+    required: false
+  bedrock-api-key:
+    description: 'AWS Bedrock API Key (not required if using IAM roles)'
+    required: false
+  aws-region:
+    description: 'AWS region for Bedrock (default: us-east-1)'
+    required: false
+    default: 'us-east-1'
+  bedrock-model-id:
+    description: 'Bedrock model ID (default: anthropic.claude-3-5-sonnet-20241022-v2:0)'
+    required: false
+    default: 'anthropic.claude-3-5-sonnet-20241022-v2:0'
+  llm-provider:
+    description: 'LLM provider to use (openai, gemini, claude, bedrock)'
+    required: true
+    default: 'openai'
+  max-iterations:
+    description: 'Maximum iterations within action'
+    required: false
+    default: '5'
+  max-job-iterations:
+    description: 'Maximum job iterations'
+    required: false
+    default: '10'
+
 runs:
   using: node20
   main: main.js
