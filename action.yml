@@ -35,6 +35,12 @@ inputs:
     description: 'Maximum job iterations'
     required: false
     default: '10'
+  github-token:
+    description: 'GITHUB_TOKEN for GitHub API calls (logs download)'
+    required: false
+  extra-context-paths:
+    description: 'Optional newline-delimited list of files/dirs with additional system/platform docs for the agent to read'
+    required: false
 
 runs:
   using: node20
