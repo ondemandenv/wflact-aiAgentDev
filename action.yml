@@ -1,6 +1,78 @@
 name: '@actions/wflact-aiAgentDev'
-description: 'ONDEMANDENV.dev, @actions/wflact-aiAgentDev'
+description: 'ONDEMANDENV.dev Service-Owner agent step: runs `opencode run` against this enver, commits only in-scope changes'
 author: 'ONDEMANDENV.dev'
+
+# Runner contract (the action never picks an LLM vendor):
+#   `opencode` >= 1.18.33 on PATH (or `opencode-bin`)
+#   ODMD_AGENT_PROVIDER_CONFIG  path to a PROVIDER-ONLY opencode config: keys $schema, provider, model,
+#                               small_model, enabled_providers, disabled_providers. Anything else is rejected.
+#                               Secrets referenced as {env:NAME} are the only runner env passed to opencode.
+#   ODMD_AGENT_AUTH_FILE        optional opencode auth.json, copied into the per-run data dir.
+# The provider key is reachable by the model whenever any bash command is allowed - issue a scoped,
+# budgeted key, never a broad cloud credential.
+
+inputs:
+  allow-push:
+    description: "Push the filtered commit to the enver branch (the push re-triggers the enver = the outer loop). 'false' keeps the commit local and exposes it as a patch file."
+    default: 'false'
+  max-steps:
+    description: 'Tool calls per run. Advisory to opencode; the action kills the run at max-steps + 2.'
+    default: '20'
+  max-cycles:
+    description: 'Consecutive agent-authored commits at HEAD before the action refuses to run. Reset by any non-agent commit or an upstream (dependency/image) trigger.'
+    default: '20'
+  max-cost-usd:
+    description: 'Kill the run when the streamed cost exceeds this (empty = no cost cap).'
+    default: ''
+  max-minutes:
+    description: 'Wall-clock cap for the opencode run.'
+    default: '30'
+  model:
+    description: 'provider/model override; default = "model" from the runner provider config.'
+    default: ''
+  job-status:
+    description: 'The enver job status, so the agent knows whether the build succeeded (context, not a gate). Passed in by the calling workflow.'
+    default: ''
+  instructions:
+    description: 'Extra instruction files, one per line, relative to ODMD_work_dir (globs allowed in the last segment), added to the instructions of the repo opencode.json.'
+    default: ''
+  history-runs:
+    description: 'Consecutive prior agent sessions (the committed .odmd/agent-session/session.json of each agent commit) rendered into the instruction context, newest first.'
+    default: '10'
+  history-max-tokens:
+    description: 'Approximate token cap for the concatenated rendered history (4 chars/token). Older sessions are dropped to stay under it.'
+    default: '90000'
+  bash-deny:
+    description: 'opencode bash deny patterns, one per line; everything else is allowed. The action resets HEAD if the run moves it anyway, and commits only through its filter.'
+    default: |
+      git commit*
+      git push*
+      git reset*
+      git rebase*
+      git merge*
+      git cherry-pick*
+      git checkout*
+      git switch*
+  protected-paths:
+    description: 'Extra paths (names or a/b prefixes) the commit filter never commits, in addition to the built-in list.'
+    default: ''
+  opencode-bin:
+    description: 'opencode executable.'
+    default: 'opencode'
+
+outputs:
+  verdict:
+    description: 'CHANGED | SYNCED | CONTRACT-ITEM | BLOCKED | NONE | NO-EFFECTIVE-CHANGE | KILLED(<why>) | REFUSED | DISABLED'
+  commit-sha:
+    description: 'The filtered commit, if any.'
+  patch:
+    description: 'Path to the commit as a patch file, if any.'
+  discarded:
+    description: 'Number of changed paths the filter reverted.'
+  tool-calls:
+    description: 'Tool calls the model made.'
+  cost-usd:
+    description: 'Cost reported by opencode.'
 
 runs:
   using: node20
