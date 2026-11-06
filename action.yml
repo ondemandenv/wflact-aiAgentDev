@@ -17,7 +17,7 @@ inputs:
     default: 'false'
   max-steps:
     description: 'Tool calls per run. Advisory to opencode; the action kills the run at max-steps + 2.'
-    default: '20'
+    default: '40'
   max-cycles:
     description: 'Consecutive agent-authored commits at HEAD before the action refuses to run. Reset by any non-agent commit or an upstream (dependency/image) trigger.'
     default: '20'
