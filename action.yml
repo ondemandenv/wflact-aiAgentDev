@@ -19,8 +19,11 @@ inputs:
     description: 'Tool calls per run. Advisory to opencode; the action kills the run at max-steps + 2.'
     default: '40'
   max-cycles:
-    description: 'Consecutive agent-authored commits at HEAD before the action refuses to run. Reset by any non-agent commit or an upstream (dependency/image) trigger.'
+    description: 'Runs in one session before the action refuses to run. A new session (the previous one closed, or the first run of this enver) starts the count again.'
     default: '20'
+  abandon-runs:
+    description: 'Consecutive runs in a session that kept no code and did not touch the plan before the session is marked abandoned (0 = never). One written handoff, then the loop stops until a human acts.'
+    default: '3'
   max-cost-usd:
     description: 'Kill the run when the streamed cost exceeds this (empty = no cost cap).'
     default: ''
@@ -62,7 +65,9 @@ inputs:
 
 outputs:
   verdict:
-    description: 'CHANGED | SYNCED | CONTRACT-ITEM | BLOCKED | NONE | NO-EFFECTIVE-CHANGE | KILLED(<why>) | REFUSED | DISABLED'
+    description: 'CHANGED | SYNCED | CONTRACT-ITEM | BLOCKED | NONE | NO-EFFECTIVE-CHANGE | KILLED(<why>) | REFUSED | ABANDONED | DISABLED'
+  session-id:
+    description: 'The session this run belonged to, `<n>-<slug>`.'
   commit-sha:
     description: 'The filtered commit, if any.'
   patch:
