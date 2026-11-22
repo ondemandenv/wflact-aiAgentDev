@@ -13,8 +13,8 @@ author: 'ONDEMANDENV.dev'
 
 inputs:
   allow-push:
-    description: "Push the filtered commit to the enver branch (the push re-triggers the enver = the outer loop). 'false' keeps the commit local and exposes it as a patch file."
-    default: 'false'
+    description: "Push the filtered commit to the enver branch (the push re-triggers the enver = the outer loop). Default true so a session's state survives the run: with 'false' nothing lands and the next run reads zero history. A push only happens when the run has something new to say (code, plan, or a different conclusion), and max-cycles caps the resulting loop."
+    default: 'true'
   max-steps:
     description: 'Tool calls per run. Advisory to opencode; the action kills the run at max-steps + 2.'
     default: '40'
