@@ -62,6 +62,9 @@ inputs:
   opencode-bin:
     description: 'opencode executable.'
     default: 'opencode'
+  opencode-log-level:
+    description: "Pass opencode's own diagnostics (provider, transport, upstream status) to the job log. Empty = off. Use 'DEBUG' when a run fails with a generic wrapper error such as UnknownError, whose message and `ref` do not name the cause; the stderr already captured by the action only carries what opencode chose to print without this."
+    default: ''
 
 outputs:
   verdict:
