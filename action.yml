@@ -81,6 +81,8 @@ outputs:
     description: 'Tool calls the model made.'
   cost-usd:
     description: 'Cost reported by opencode.'
+  events-file:
+    description: 'Path to the run''s raw NDJSON event stream (also uploaded as an artifact, `aiAgentDev-events-<session>-run-<n>-attempt-<a>`).'
 
 runs:
   using: node20
